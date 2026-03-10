@@ -14,6 +14,6 @@ psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENT
 echo "==> mv_detailed_so_stock DONE."
 psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_promo_bonus;"
 echo "==> mv_promo_bonus DONE."
-# psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_promo_bonus_monthly_and_limit_long;"
-# echo "==> mv_promo_bonus_monthly_and_limit_long DONE."
+psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_promo_bonus_monthly_and_limit_long;"
+echo "==> mv_promo_bonus_monthly_and_limit_long DONE."
 echo "==> Done."
