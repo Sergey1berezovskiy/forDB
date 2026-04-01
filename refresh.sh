@@ -6,7 +6,6 @@ refresh_mv () {
   echo "==> Refreshing $mv ..."
   psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "
     SET work_mem = '256MB';
-    SET temp_file_limit = '5GB';
     REFRESH MATERIALIZED VIEW CONCURRENTLY $mv;
   "
   echo "==> $mv DONE."
@@ -19,5 +18,3 @@ refresh_mv mv_stock_level
 refresh_mv mv_detailed_so_stock
 refresh_mv mv_promo_bonus
 refresh_mv mv_promo_bonus_monthly_and_limit_long
-
-echo "==> Done."
