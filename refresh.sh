@@ -1,24 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-set -euo pipefail
+refresh_mv () {
+  local mv=$1
+  echo "==> Refreshing $mv ..."
+  psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "
+    SET work_mem = '256MB';
+    SET temp_file_limit = '5GB';
+    REFRESH MATERIALIZED VIEW CONCURRENTLY $mv;
+  "
+  echo "==> $mv DONE."
+}
 
-echo "==> Refreshing materialized views..."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "
-SET work_mem = '256MB';
-SET temp_file_limit = '5GB';
-REFRESH MATERIALIZED VIEW CONCURRENTLY mv_weekly_plan_fact;"
-echo "==> mv_weekly_plan_fact DONE."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_weekly_so;"
-echo "==> mv_weekly_so DONE."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_dash_long;"
-echo "==> mv_dash_long DONE."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_stock_level;"
-echo "==> mv_stock_level DONE."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_detailed_so_stock;"
-echo "==> mv_detailed_so_stock DONE."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_promo_bonus;"
-echo "==> mv_promo_bonus DONE."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_promo_bonus_monthly_and_limit_long;"
-echo "==> mv_promo_bonus_monthly_and_limit_long DONE."
+refresh_mv mv_weekly_plan_fact
+refresh_mv mv_weekly_so
+refresh_mv mv_dash_long
+refresh_mv mv_stock_level
+refresh_mv mv_detailed_so_stock
+refresh_mv mv_promo_bonus
+refresh_mv mv_promo_bonus_monthly_and_limit_long
+
 echo "==> Done."
