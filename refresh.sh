@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+set -euo pipefail
+
 echo "==> Refreshing materialized views..."
-psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_weekly_plan_fact;"
+psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "
+SET work_mem = '256MB';
+SET temp_file_limit = '5GB';
+REFRESH MATERIALIZED VIEW CONCURRENTLY mv_weekly_plan_fact;"
 echo "==> mv_weekly_plan_fact DONE."
 psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -c "REFRESH MATERIALIZED VIEW CONCURRENTLY mv_weekly_so;"
 echo "==> mv_weekly_so DONE."
